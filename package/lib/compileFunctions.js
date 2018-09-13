@@ -26,6 +26,7 @@ module.exports = {
 
       const funcTemplate = getFunctionTemplate(
         funcObject,
+        this.options.stage,
         this.serverless.service.provider.region,
         `gs://${
         this.serverless.service.provider.deploymentBucketName
@@ -123,7 +124,7 @@ const validateEventsProperty = (funcObject, functionName) => {
   }
 };
 
-const getFunctionTemplate = (funcObject, region, sourceArchiveUrl) => { //eslint-disable-line
+const getFunctionTemplate = (funcObject, stage, region, sourceArchiveUrl) => { //eslint-disable-line
   return {
     type: 'cloudfunctions.v1beta2.function',
     name: funcObject.name,
@@ -132,6 +133,7 @@ const getFunctionTemplate = (funcObject, region, sourceArchiveUrl) => { //eslint
       availableMemoryMb: 256,
       runtime: 'nodejs8',
       timeout: '60s',
+      entryPoint: `${stage}-${funcObject.handler}`,
       function: funcObject.handler,
       sourceArchiveUrl,
     },
